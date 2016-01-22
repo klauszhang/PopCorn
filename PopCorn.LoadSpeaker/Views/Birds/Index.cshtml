@@ -1,0 +1,50 @@
+﻿
+@{
+  ViewBag.Title = "Index";
+}
+
+<h2>Birds</h2>
+
+<div>
+  List of PopCorns:<br />
+  <ul id="popcornlist" class="list-group"></ul>
+</div>
+
+@section scripts{
+  <script>
+    $(function () {
+      'use strict';
+      var listElem = $("#popcornlist");
+      var square = $.connection.popCornHub;
+
+      // when a popcorn come
+      square.client.newPopCornComeIn = function (popCornId) {
+        listElem.append('<li id=\"' + popCornId + '\" class="list-group-item">' + popCornId + '</li><li class="list-group-item"><div class="progress progress-striped active" style="margin-bottom:0"><div class="progress-bar progress-bar-success ' + popCornId + '" style="width: 0%"></div></div></li>');
+      }
+
+      // when a popcorn leave
+      square.client.popCornLeave = function (popCornId) {
+        $("#" + popCornId).next().remove();
+        $("#" + popCornId).remove();
+      }
+
+      // When get popcorn update information
+      square.client.updateDistance = function (distanceFromBird, popCornId) {
+        var selector = "." + popCornId;
+        $(selector).width(distanceFromBird+"%").text(distanceFromBird);
+      }
+
+      // new bird comes
+      $.connection.hub.start().done(function () {
+        square.server.newBird("@ViewBag.BirdId");
+      });
+
+      // bird leaves
+      $(window).bind('unload', function () {
+        square.server.birdQuit("@ViewBag.BirdId")
+      });
+
+
+    });
+  </script>
+}

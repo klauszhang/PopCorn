@@ -1,0 +1,27 @@
+﻿@{
+  ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron" style="margin-top:30px">
+  <h2>Welcome to The Lovely Square!</h2>
+
+  <p>
+    please pick where are you going to join
+  </p>
+
+</div>
+
+<div class="col-md-6">
+
+  <p>
+    Birdy comes here to monitor Popcorn and choose what to do with them.
+  </p>
+  @Html.ActionLink("Birds comes here", "Index", "Birds", null, new { @class = "btn btn-warning" })
+</div>
+
+<div class="col-md-6">
+  <p>
+    PopCorn, they just want to have some fun...
+  </p>
+  @Html.ActionLink("PopCorn Loves here", "Index", "PopCorn", null, new { @class = "btn btn-success" })
+</div>

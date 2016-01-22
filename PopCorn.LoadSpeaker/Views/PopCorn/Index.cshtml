@@ -1,0 +1,85 @@
+﻿
+@{
+  ViewBag.Title = "Index";
+}
+
+<h2>PopCorn Generator</h2>
+
+@* the generated random information will comes here *@
+
+<p>
+  UID: @ViewBag.PopCornId
+</p>
+
+<div>
+  <table class="table">
+    <tr>
+      <th>Distance from Birdy:</th>
+      <td><span id="distance"></span></td>
+    </tr>
+    <tr>
+      <th>Sweetness: </th>
+      <td><span id="sweetness"></span></td>
+    </tr>
+    <tr>
+      <th>Softness</th>
+      <td><span id="softness"></span></td>
+    </tr>
+  </table>
+</div>
+
+@section scripts{
+  <script>
+    (function () {
+      'use strict';
+      var distanceElem, sweetnessElem, softnessElem;
+      var speedFactor = 1; // the bigger the faster
+
+      distanceElem = $('#distance');
+      sweetnessElem = $('#sweetness');
+      softnessElem = $('#softness');
+
+      // distance will change every 5 seconds
+      var distanceInterval = setValue(distanceElem, getRandom() * speedFactor)
+      var sweetnessInterval = setValue(sweetnessElem, getRandom() * speedFactor)
+      var softnessInterval = setValue(softnessElem, getRandom() * speedFactor)
+
+      function getRandom() {
+        return (Math.random() * 100).toFixed(4);
+      }
+
+      function setValue(elem, intervalTime) {
+        var factor;
+
+        if (intervalTime < 0.1) {
+          intervalTime = 0.1;
+        }
+
+        elem.text(getRandom());
+        return setInterval(function () {
+          factor = getRandom();
+          elem.text(factor);
+        }, 20000 / intervalTime);
+      }
+
+      //signalr initialize
+      var square = $.connection.popCornHub;
+
+      $.connection.hub.start().done(function () {
+        square.server.newPopCorn("@ViewBag.PopCornId");
+      })
+
+      // When exit
+      $(window).bind('unload', function () {
+        square.server.popCornQuit("@ViewBag.PopCornId");
+      });
+
+      // Update status
+      var regularUpdate = setInterval(function () {
+        square.server.checkDistance(distanceElem.text(), "@ViewBag.PopCornId");
+      }, 5000 / speedFactor)
+
+    })();
+  </script>
+
+}
