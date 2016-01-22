@@ -34,3 +34,24 @@ textarea {
   -webkit-transition: width 0.3s ease !important;
   transition: width 0.3s ease !important;
 }
+
+#hub {
+      -webkit-transition:text-shadow 0.5s ease-in-out;
+    -moz-transition:text-shadow 0.5s ease-in-out;
+    -o-transition:text-shadow 0.5s ease-in-out;
+    transition:text-shadow 0.5s ease-in-out;    
+    
+}
+.sending{
+    background-color:rgb(255, 106, 0);
+    color:white;
+    
+}
+
+.fix .fa-spin {
+  -webkit-transform-origin: 50% calc(50% - .5px);
+  -moz-transform-origin: 50% calc(50% - .5px);
+  -ms-transform-origin: 50% calc(50% - .5px);
+  -o-transform-origin: 50% calc(50% - .5px);
+  transform-origin: 50% calc(50% - .5px);
+}

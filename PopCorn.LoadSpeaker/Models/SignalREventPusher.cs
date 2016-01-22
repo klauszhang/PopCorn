@@ -3,6 +3,7 @@ using PopCorn.Seer.ExternalSystem;
 using Microsoft.AspNet.SignalR;
 using PopCorn.LoadSpeaker.Service;
 using System.Collections.Generic;
+using PopCorn.Seer.Message;
 
 namespace PopCorn.LoadSpeaker.Models
 {
@@ -38,9 +39,18 @@ namespace PopCorn.LoadSpeaker.Models
         .updateDistance(data, userId);
     }
 
-    public void TakeThosePopCorn(string popCornId, int maxValue, int minValue)
+    public void FindBetween(string popCornId, float min, float max)
     {
-      throw new NotImplementedException();
+      _squareHubContext.Clients
+        .Group("PopCorns")
+        .findBetween(popCornId, min, max);
     }
+
+    public void TellTheBirdTheInfoItWants(string distanceVal, string sweetVal, string softVal, string popCornId, string targetUserId)
+    {
+      _squareHubContext.Clients
+        .Client(targetUserId)
+        .updatePopCornDetail(distanceVal, sweetVal, softVal, popCornId)
+;    }
   }
 }

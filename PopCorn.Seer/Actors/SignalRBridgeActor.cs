@@ -12,13 +12,15 @@ namespace PopCorn.Seer.Actors
 {
   public class SignalRBridgeActor : ReceiveActor
   {
-    private readonly IEventsPusher _eventPuser;
+    private readonly IEventsPusher _eventPusher;
+    private readonly IActorRef _theRuler;
     private readonly IActorRef _theSeer;
 
-    public SignalRBridgeActor(IEventsPusher eventsPusher, IActorRef theSeer)
+    public SignalRBridgeActor(IEventsPusher eventsPusher, IActorRef theSeer,IActorRef theRuler)
     {
-      _eventPuser = eventsPusher;
+      _eventPusher = eventsPusher;
       _theSeer = theSeer;
+      _theRuler = theRuler;
 
       Receive<NewPopCornMessage>(
         msg =>
@@ -30,7 +32,7 @@ namespace PopCorn.Seer.Actors
       Receive<AddNewPopCornMessage>(
         msg =>
         {
-          _eventPuser.PopCornComes(msg.UserId);
+          _eventPusher.PopCornComes(msg.UserId);
         });
 
       Receive<PopCornLeavesMessage>(
@@ -44,7 +46,7 @@ namespace PopCorn.Seer.Actors
         msg =>
         {
           Debug.WriteLine("a popcorn confirmed gone, telling signalr", GetType().Name);
-          _eventPuser.PopCornLeaves(msg.UserId);
+          _eventPusher.PopCornLeaves(msg.UserId);
         });
 
       Receive<NewBirdMessage>(
@@ -79,7 +81,29 @@ namespace PopCorn.Seer.Actors
         msg =>
         {
           Debug.WriteLine("proceed to update distance information for birds, forwarding to signalr", GetType().Name);
-          _eventPuser.UpdateDistance(msg.UserId, msg.TheData);
+          _eventPusher.UpdateDistance(msg.UserId, msg.TheData);
+        });
+
+      Receive<QueryMessage>(
+        msg =>
+        {
+          _theRuler.Tell(msg);
+          Debug.WriteLine("sending query to ruler", GetType().Name);
+        });
+
+      Receive<FindBetweenMessage>(
+        msg =>
+        {
+          _eventPusher.FindBetween(msg.ConnectionId, msg.MinValue, msg.MaxValue);
+          Debug.WriteLine("send query out by signalr", GetType().Name);
+
+        });
+
+      Receive<PopCornDetailMessage>(
+        msg =>
+        {
+          // TODO Can do something else
+          _eventPusher.TellTheBirdTheInfoItWants(msg.DistanceVal, msg.SweetVal, msg.SoftVal,msg.PopCornId, msg.TargetUserId);
         });
     }
   }

@@ -21,8 +21,10 @@ namespace PopCorn.LoadSpeaker.Models
 
       ActorReferences.TheSeer = _actorSystem.ActorOf<TheSeerActor>();
 
+      ActorReferences.TheRuler = _actorSystem.ActorOf<TheRulerActor>();
+
       ActorReferences.SignalRBridge = _actorSystem.ActorOf(
-        Props.Create(() => new SignalRBridgeActor(_eventPusher, ActorReferences.TheSeer)), "SignalRBridge");
+        Props.Create(() => new SignalRBridgeActor(_eventPusher, ActorReferences.TheSeer,ActorReferences.TheRuler)), "SignalRBridge");
     }
 
     public static void Shutdown()
@@ -32,8 +34,9 @@ namespace PopCorn.LoadSpeaker.Models
 
     public static class ActorReferences
     {
-      public static IActorRef TheSeer { get; set; }
-      public static IActorRef SignalRBridge { get; set; }
+      public static IActorRef TheSeer { get; internal set; }
+      public static IActorRef SignalRBridge { get; internal set; }
+      public static IActorRef TheRuler { get; internal set; }
     }
   }
 }

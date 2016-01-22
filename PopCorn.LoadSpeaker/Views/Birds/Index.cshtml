@@ -5,12 +5,22 @@
 
 <h2>Birds</h2>
 
+<form class="form-group form-inline">
+  Distance between (0-100):
+  <input type="number" value="" placeholder="min value" name="minvalue" id="minvalue" class="form-control" min="0" required />
+
+  <input type="number" value="" placeholder="max value" name="maxvalue" id="maxvalue" class="form-control" max="100" required />
+
+  <button class="btn btn-warning" id="fetch">Fetch them!</button>
+</form>
+
 <div>
   List of PopCorns:<br />
   <ul id="popcornlist" class="list-group"></ul>
 </div>
 
 @section scripts{
+<script src="~/Content/spin.js"></script>
   <script>
     $(function () {
       'use strict';
@@ -19,19 +29,19 @@
 
       // when a popcorn come
       square.client.newPopCornComeIn = function (popCornId) {
-        listElem.append('<li id=\"' + popCornId + '\" class="list-group-item">' + popCornId + '</li><li class="list-group-item"><div class="progress progress-striped active" style="margin-bottom:0"><div class="progress-bar progress-bar-success ' + popCornId + '" style="width: 0%"></div></div></li>');
+        listElem.append('<div id=\"' + popCornId + '\"><li class="list-group-item">' + popCornId + '</li><li class="list-group-item"><div class="progress progress-striped active" style="margin-bottom:0"><div class="progress-bar progress-bar-success ' + popCornId + ' distance" style="width: 0%"></div></div></li><li class="list-group-item ' + popCornId + '" style="display:none"><div class="progress progress-striped active" style="margin-bottom:0"><div class="progress-bar progress-bar-warning ' + popCornId + ' sweetness" style="width: 30%;"></div></div></li><li class="list-group-item ' + popCornId + '" style="display:none"><div class="progress progress-striped active" style="margin-bottom:0"><div class="progress-bar progress-bar-danger ' + popCornId + ' softness" style="width: 30%"></div></div></li></div>');
       }
 
       // when a popcorn leave
       square.client.popCornLeave = function (popCornId) {
-        $("#" + popCornId).next().remove();
-        $("#" + popCornId).remove();
+        //$("#" + popCornId).next().remove();
+        $("#" + popCornId).hide();
       }
 
       // When get popcorn update information
       square.client.updateDistance = function (distanceFromBird, popCornId) {
-        var selector = "." + popCornId;
-        $(selector).width(distanceFromBird+"%").text(distanceFromBird);
+        var selector = "." + popCornId + ".distance";
+        $(selector).width(distanceFromBird + "%").text(distanceFromBird);
       }
 
       // new bird comes
@@ -43,6 +53,25 @@
       $(window).bind('unload', function () {
         square.server.birdQuit("@ViewBag.BirdId")
       });
+
+      // fetch distance between
+      $("#fetch").click(function (event) {
+        event.preventDefault();
+        var min = $("#minvalue").val();
+        var max = $("#maxvalue").val();
+        square.server.fetchBetween(min, max);
+
+      });
+
+      // when popcorn detail comes
+      square.client.updatePopCornDetail = function (distanceVal, sweetVal, softVal, popCornId) {
+        var selector = ".list-group-item." + popCornId
+        $(selector).slideDown();
+        selector = "." + popCornId;
+        $(selector + '.distance').width(distanceVal + "%").text(distanceVal);
+        $(selector + '.sweetness').width(sweetVal + "%").text(sweetVal);
+        $(selector + '.softness').width(softVal + "%").text(softVal);
+      }
 
 
     });

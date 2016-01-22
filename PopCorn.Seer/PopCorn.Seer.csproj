@@ -51,6 +51,7 @@
     <Compile Include="Actors\BirdActor.cs" />
     <Compile Include="Actors\SignalRBridgeActor.cs" />
     <Compile Include="Actors\PopCornActor.cs" />
+    <Compile Include="Actors\TheRulerActor.cs" />
     <Compile Include="Actors\TheSeerActor.cs" />
     <Compile Include="ExternalSystem\IEventsPusher.cs" />
     <Compile Include="Message\AddNewPopCornMessage.cs" />
@@ -58,10 +59,13 @@
     <Compile Include="Message\BasicMessageWithData.cs" />
     <Compile Include="Message\BirdLeavesMessage.cs" />
     <Compile Include="Message\CheckDistanceMessage.cs" />
+    <Compile Include="Message\FindBetweenMessage.cs" />
     <Compile Include="Message\INewMessage.cs" />
     <Compile Include="Message\NewBirdMessage.cs" />
     <Compile Include="Message\NewPopCornMessage.cs" />
+    <Compile Include="Message\PopCornDetailMessage.cs" />
     <Compile Include="Message\PopCornLeavesMessage.cs" />
+    <Compile Include="Message\QueryMessage.cs" />
     <Compile Include="Message\RemoveBirdMessage.cs" />
     <Compile Include="Message\RemovePopCornMessage.cs" />
     <Compile Include="Message\UpdateDistanceMesssage.cs" />

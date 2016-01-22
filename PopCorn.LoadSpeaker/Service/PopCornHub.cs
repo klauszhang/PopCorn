@@ -57,9 +57,36 @@ namespace PopCorn.LoadSpeaker.Service
     {
       TheRealmSystem.ActorReferences
         .SignalRBridge
-        .Tell(new CheckDistanceMessage(userId,dist));
+        .Tell(new CheckDistanceMessage(userId, dist));
 
-      //Clients.Group("Birds").updateDistance(distanceFromBird, userId);
+      Debug.WriteLine("Receive distance information, telling bridge", GetType().Name);
+    }
+
+    public void FetchBetween(string min, string max)
+    {
+      //float min, max;
+      //try
+      //{
+      //  float.TryParse(small, out min);
+      //  float.TryParse(big, out max);
+      //}
+      //catch (System.Exception e)
+      //{
+      //  return;
+      //}
+
+      var connectionId = Context.ConnectionId;
+      TheRealmSystem.ActorReferences
+        .SignalRBridge
+        .Tell(new QueryMessage(connectionId, QueryMethod.Between, min, max));
+
+    }
+
+    public void SendAll(string dist, string sweet, string soft,string popCornId, string target)
+    {
+      TheRealmSystem.ActorReferences
+        .SignalRBridge
+        .Tell(new PopCornDetailMessage(dist, sweet, soft, popCornId, target));
     }
   }
 }

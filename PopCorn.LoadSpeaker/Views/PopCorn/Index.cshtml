@@ -3,7 +3,10 @@
   ViewBag.Title = "Index";
 }
 
-<h2>PopCorn Generator</h2>
+<h2>
+  PopCorn Generator<i id="spinner"></i>
+</h2>
+
 
 @* the generated random information will comes here *@
 
@@ -11,7 +14,7 @@
   UID: @ViewBag.PopCornId
 </p>
 
-<div>
+<div id="hud">
   <table class="table">
     <tr>
       <th>Distance from Birdy:</th>
@@ -29,15 +32,18 @@
 </div>
 
 @section scripts{
+<script src="~/Content/spin.js"></script>
   <script>
     (function () {
       'use strict';
-      var distanceElem, sweetnessElem, softnessElem;
+      var distanceElem, sweetnessElem, softnessElem,spinnerElem;
       var speedFactor = 1; // the bigger the faster
+      var popCornId = "@ViewBag.PopCornId";
 
       distanceElem = $('#distance');
       sweetnessElem = $('#sweetness');
       softnessElem = $('#softness');
+      spinnerElem = $('#spinner');
 
       // distance will change every 5 seconds
       var distanceInterval = setValue(distanceElem, getRandom() * speedFactor)
@@ -66,18 +72,31 @@
       var square = $.connection.popCornHub;
 
       $.connection.hub.start().done(function () {
-        square.server.newPopCorn("@ViewBag.PopCornId");
+        square.server.newPopCorn(popCornId);
       })
 
       // When exit
       $(window).bind('unload', function () {
-        square.server.popCornQuit("@ViewBag.PopCornId");
+        square.server.popCornQuit(popCornId);
       });
 
-      // Update status
-      var regularUpdate = setInterval(function () {
-        square.server.checkDistance(distanceElem.text(), "@ViewBag.PopCornId");
+      // states
+      var commonState, detailState;
+      commonState = setInterval(function () {
+        square.server.checkDistance(distanceElem.text(), popCornId);
       }, 5000 / speedFactor)
+
+      square.client.findBetween = function (target, min, max) {
+        var dist = Number(distanceElem.text());
+        if (dist > min && dist < max) {
+          var spinner = new Spinner().spin()
+          spinnerElem.append(spinner.el);
+          //clearInterval(state);
+          detailState = setInterval(function () {
+            square.server.sendAll(distanceElem.text(), sweetnessElem.text(), softnessElem.text(), popCornId, target);
+          }, 1000 / speedFactor);
+        }
+      }
 
     })();
   </script>
